@@ -236,12 +236,12 @@ char* decodificar(string namefile, int n){
        ceros=(n-unos);
     }
 
-        char* letras = convertir_bytes(archivo_decodificado, tam);
+        char* letras = convertir_bytes(archivo_decodificado, tam);                //Arreglo con todos los caracteres
 
         cout << "Ingrese el nombre del archivo de salida DECODIFICADO (Use .txt): " << endl << endl;
         cin>>namefile;
 
-        escribir_dat(letras,namefile, tam);
+        escribir_dat(letras, namefile, tam);
         return letras;
 
 }
@@ -249,16 +249,15 @@ char* decodificar(string namefile, int n){
 
 /////////////////////////////////////////////////////////SEGUNDO MÉTODO/////////////////////////////////////////////////////////////////////////
 
-string obtenerstring(string namefiletxt){
+string obtenerstring(string namefiletxt){                        //Obtengo un string con toda la informacion del archivo
     unsigned long long tam = 0;
     string textoinicial = "";
     fstream archivo1;
     archivo1.open(namefiletxt, fstream::in | fstream::out | fstream::binary | fstream::ate);
-    tam=obtener_long(namefiletxt);
-    //cout << "El tamaño es:" << tam <<endl;
+    tam = obtener_long(namefiletxt);
     archivo1.seekg(0);
     string elemento;
-    elemento="";
+    elemento = "";
     char c;
      for (unsigned long long i=0; i<tam; i++){
           archivo1.seekg(i);
@@ -266,14 +265,12 @@ string obtenerstring(string namefiletxt){
           textoinicial.push_back(c);
 
       }
-     //textoinicial+="/0";
-     //cout << textoinicial << endl;
      archivo1.close();
      return textoinicial;
 
 }
 
-string obtenerbinario(string namefile){
+string obtenerbinario(string namefile){                                  //Obtengo el binario equivalente al archivo
     fstream archivo1;
     int entero1;
     char c;
@@ -283,11 +280,11 @@ string obtenerbinario(string namefile){
     unsigned long long tam;
     tam = 0;
     tam = obtener_long(namefile);
-    for (unsigned long long i=0; i<tam; i++){
-         archivo1.seekg(i);
-         archivo1.get(c);
+    for (unsigned long long i=0; i<tam; i++){                             //Recorro el archivo
+         archivo1.seekg(i);                                               //Posiciono el cursor en i
+         archivo1.get(c);                                                 //Obtengo el caracter
          entero1 = int(c);
-         binarionatural += stringbinario(entero1);
+         binarionatural += stringbinario(entero1);                        //Lo convierto a binario y lo agrego al string que lo contiene todo
 
 
      }
@@ -297,7 +294,7 @@ string obtenerbinario(string namefile){
 
 }
 
-string stringbinario(int num){
+string stringbinario(int num){                                            //Convierto el valor entero de un caracter a su binario
 
     string bloquebinario="00000000";
     for (int i=0; i<8; i++){
@@ -305,11 +302,10 @@ string stringbinario(int num){
         num=num/2;
     }
 
-
     return bloquebinario;
 }
 
-string obtenerbinariocodificado(string namefile, int n){    //Obtengo string de 1 y 0
+string obtenerbinariocodificado(string namefile, int n){    //Obtengo el string binario con las reglas del segundo método aplicadas
     fstream archivo1;
     unsigned long long cont;
     cont = 0;
@@ -319,17 +315,17 @@ string obtenerbinariocodificado(string namefile, int n){    //Obtengo string de 
     string bloque2 = "";
     unsigned long long tam=0;
     tam = obtener_long(namefile);
-    string binario = obtenerbinario(namefile);
+    string binario = obtenerbinario(namefile);              //Obtengo el binario
     //cout << binario << endl;
     archivo1.seekg(0);
-    while (cont<(tam*8)){
+    while (cont<(tam*8)){                                   //Me muevo en bloques de n bits
 
-       for (int p=0; p<n; p++) bloque[p] = binario[cont+p];
+       for (int p=0; p<n; p++) bloque[p] = binario[cont+p]; //Saco un bloque del binario original
 
-         bloque2[0] = bloque[n-1];
-         for (int m=1; m<n; m++) bloque2[m] = bloque[m-1];
+         bloque2[0] = bloque[n-1];                          //Ultimo bit del bloque se convierte en el primero
+         for (int m=1; m<n; m++) bloque2[m] = bloque[m-1];  //Muevo los demás bits una posicion
 
-          for (int x=0; x<n; x++) binario[cont+x] = bloque2[x];
+          for (int x=0; x<n; x++) binario[cont+x] = bloque2[x];  //Lo pongo en el string binario de salida
 
        cont+=n;
     }
@@ -338,45 +334,41 @@ string obtenerbinariocodificado(string namefile, int n){    //Obtengo string de 
     return binario;
 }
 
-int obtenerentero(string binario8bits){
+int obtenerentero(string binario8bits){                          //Convierto un bloque de 1 y 0s a su equivalente entero
     int numero1=0, numero2=0;
     string elemento="";
-    //escribirdatstring(str3, namefilechar);
-    for(int i=0; i<8; i++){
+    for(int i=0; i<8; i++){                                      //Recorro el bloque de atras a adelante
         elemento = binario8bits[7-i];
-        numero1=stoi(elemento);
-        if(numero1==1) numero2 = numero2+levar(2, i);
+        numero1=stoi(elemento);                                  //Convierto a entero para poder operar
+        if(numero1==1) numero2 = numero2+levar(2, i);            //Si hay un 1 elevo 2 a su correspodiente potencia y sumo
     }
-    //cout << numero2 << endl;
     return numero2;
 }
 
-string caracterescodificados(string namefile, int semilla){
-    unsigned long long cont=0;
-    int numero=0;
+string caracterescodificados(string namefile, int semilla){      //Obtengo los caracteres encriptados
+    unsigned long long cont = 0;
+    int numero = 0;
     char caracter;
     string texto;
-    texto="";
+    texto = "";
     string bloque;
-    bloque="        ";
-    unsigned long long tam=0;
+    bloque = "        ";
+    unsigned long long tam = 0;
     tam = obtener_long(namefile);
     string binario1 = obtenerbinariocodificado(namefile, semilla);
-    //cout << binario1 << endl;
-    while (cont<(tam*8)){
-        for (int p=0;p<8;p++) bloque[p]=binario1[cont+p];
-        numero=obtenerentero(bloque);
-        caracter=char(numero);
-        texto.push_back(caracter);
+    while (cont<(tam*8)){                                           //Me muevo la cantidad de espacios que tenga el archivo
+        for (int p=0; p<8; p++) bloque[p] = binario1[cont+p];       //Voy sacando bloques de binarios
+        numero = obtenerentero(bloque);                             //Los convierto a enteros
+        caracter = char(numero);                                    //Los convierto a caracteres
+        texto.push_back(caracter);                                  //Los agrego al string con toda la informacion
 
-        cont+=8;
+        cont+=8;                                                    //Me muevo 8 posiciones mas
     }
-    //cout << texto << endl;
     return texto;
 
 }
 
-void escribirdatstring(string namefile, string informacion){
+void escribirdatstring(string namefile, string informacion){       //Escribir en el documento
     fstream archivo;
     archivo.open(namefile, fstream::out | fstream::binary);
     if(archivo.is_open()){
@@ -387,19 +379,17 @@ void escribirdatstring(string namefile, string informacion){
     archivo.close();
 }
 
-void codificarstring(string namefile, int n){
-    string str1, str2;
-    str1 = caracterescodificados(namefile, n);
+void codificarstring(string namefile, int n){                        //Codificar por el metodo 2 string
+    string informacion, nombre;
+    informacion = caracterescodificados(namefile, n);
     cout << "Ingrese el nombre del archivo CODIFICADO de salida (Use .dat):" << endl << endl;
-    cin >> str2;
-    escribirdatstring(str2, str1);
+    cin >> nombre;
+    escribirdatstring(nombre, informacion);
 }
 
-string obtenerbinariodecodificado(string namefile, int n){
+string obtenerbinariodecodificado(string namefile, int n){           //Obtengo el binario decodificado
     string strbool;
-    //strletras = "";
     strbool = "";
-    //strbool = obtenerstring(namefile);
     strbool = obtenerbinario(namefile);
 
     fstream archivo1;
@@ -411,10 +401,8 @@ string obtenerbinariodecodificado(string namefile, int n){
     string bloque2 = "";
     unsigned long long tam = 0;
     tam = obtener_long(namefile);
-    //string binario=obtenerbinario(namefile);
-    //cout << binario << endl;
     archivo1.seekg(0);
-    while (cont<(tam*8)){
+    while (cont<(tam*8)){                                            //Aplico las mismas reglas para codificar pero a la inversa
 
        for (int p=0; p<n; p++) bloque[p] = strbool[cont+p];
 
@@ -432,7 +420,7 @@ string obtenerbinariodecodificado(string namefile, int n){
     return strbool;
 }
 
-string stringdecodificado(string namefile, int n){
+string stringdecodificado(string namefile, int n){                       //Obtebgo el string con los caracteres ya decodificados
     unsigned long long tam=0;
     tam = obtener_long(namefile)*8;
     unsigned long long cont = 0;
@@ -456,7 +444,7 @@ string stringdecodificado(string namefile, int n){
     return texto;
 }
 
-void decodificarstring(string namefile, int n){
+void decodificarstring(string namefile, int n){                               //Aplico el metodo completo
     string informacion, nombre;
     //letras=obtenerbinariodecodificado(namefile, n);
     informacion=stringdecodificado(namefile, n);

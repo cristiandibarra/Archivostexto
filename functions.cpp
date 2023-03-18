@@ -414,7 +414,7 @@ string obtenerbinariodecodificado(string namefile, int n){
     //string binario=obtenerbinario(namefile);
     //cout << binario << endl;
     archivo1.seekg(0);
-    while (cont<(tam)){
+    while (cont<(tam*8)){
 
        for (int p=0; p<n; p++) bloque[p] = strbool[cont+p];
 
@@ -431,6 +431,42 @@ string obtenerbinariodecodificado(string namefile, int n){
     //cout << binario << endl;
     return strbool;
 }
+
+string stringdecodificado(string namefile, int n){
+    unsigned long long tam=0;
+    tam = obtener_long(namefile)*8;
+    unsigned long long cont = 0;
+    int numero = 0;
+    char caracter;
+    string texto;
+    texto = "";
+    string bloque;
+    bloque = "        ";
+    string binario1 = obtenerbinariodecodificado(namefile, n);
+    //cout << binario1 << endl;
+    while (cont<(tam)){
+        for (int p=0;p<8;p++) bloque[p]=binario1[cont+p];
+        numero=obtenerentero(bloque);
+        caracter=char(numero);
+        texto.push_back(caracter);
+
+        cont+=8;
+    }
+    //cout << texto << endl;
+    return texto;
+}
+
+void decodificarstring(string namefile, int n){
+    string informacion, nombre;
+    //letras=obtenerbinariodecodificado(namefile, n);
+    informacion=stringdecodificado(namefile, n);
+    //cout << "Listo: " << str <<endl;
+
+    cout << "Ingrese el nombre del archivo de salida DECODIFICADO por string (Use .txt):" << endl << endl;
+    cin >> nombre;
+    escribirdatstring(nombre, informacion);
+}
+
 
 
 

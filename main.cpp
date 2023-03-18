@@ -4,46 +4,64 @@ using namespace std;
 
 int main(){
 
-    string namefile="";
-    string textos = "";
-    string binario = "";
-    int semilla=0;
-    char* texto=nullptr;
-    cout << "Ingrese el nombre del archivo (utilice .txt al final): " << endl << endl;
-    cin >> namefile;
-    cout << "Ingrese la semilla de codificacion: " << endl << endl;
-    cin >> semilla;
+    int metodo=0;
+    string namefile = "";
+    int semilla;
 
-    //texto=lectura1(namefile);
-    //tam=obtener_long(namefile);
-    //cout << texto << endl << endl ;
+    cout << "¿QUE DESEAS HACER? " << endl << endl;
+    cout << "1) Codificar un archivo utilizando el primer metodo." << endl;
+    cout << "2) Decodificar un archivo utilizando el primer metodo." << endl;
+    cout << "3) Codificar un archivo utilizando el segundo metodo." << endl;
+    cout << "4) Decodificar un archivo utilizando el segundo metodo." << endl;
+    cout << "5) Utilizar la aplicacion bancaria." << endl;
+    cin >> metodo;
 
-    //metodo1(namefile, semilla);
-    //decodificar(namefile, semilla);
-    //cout << texto2 << endl << endl;
+    switch (metodo) {
+    case 1:
 
-    //textos = obtenerstring(namefile);
-    //cout << textos << endl << endl;
-    binario = obtenerbinario(namefile);
-    cout << binario << endl;
-    binario = obtenerbinariocodificado(namefile, semilla);
-    cout << binario << endl;
-    textos = caracterescodificados(namefile, semilla);
-    cout << textos;
-    codificarstring(namefile, semilla);
+        cout << "Ingrese el nombre del archivo a codificar: " << endl ;
+        cin >> namefile;
+        cout << "Ingrese el valor de la semilla: " << endl;
+        cin >> semilla;
 
-    cout << "Ingrese el nombre del archivo para decodificar (Use. txt):" << endl << endl;
-    cin >> namefile;
+        metodo1(namefile, semilla);
 
-    binario = obtenerbinariodecodificado(namefile, semilla);
-    cout << binario << endl;                                       // PROBLEMA AL DECODIFICAR :(
+        break;
+    case 2:
+        cout << "Ingrese el nombre del archivo a decodificar: " << endl ;
+        cin >> namefile;
+        cout << "Ingrese el valor de la semilla: " << endl;
+        cin >> semilla;
+
+        decodificar(namefile, semilla);
+
+        break;
+    case 3:
+        cout << "Ingrese el nombre del archivo a codificar: " << endl ;
+        cin >> namefile;
+        cout << "Ingrese el valor de la semilla: " << endl;
+        cin >> semilla;
+
+        codificarstring(namefile, semilla);
+
+        break;
+    case 4:
+        cout << "Ingrese el nombre del archivo a decodificar: " << endl ;
+        cin >> namefile;
+        cout << "Ingrese el valor de la semilla: " << endl;
+        cin >> semilla;
+
+        decodificarstring(namefile, semilla);
+
+        break;
+    default:
+        break;
+    }
 
 
 
 
 
 
-
-    cout << endl;
     return 0;
 }

@@ -54,4 +54,8 @@ void codificarstring(string namefile, int n);
 
 string obtenerbinariodecodificado(string namefile, int n);
 
+string stringdecodificado(string namefile, int n);
+
+void decodificarstring(string namefile, int n);
+
 #endif // MYLIB_H

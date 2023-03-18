@@ -46,38 +46,37 @@ char* caracter_a_binario(int valorascii){
 
 unsigned long long obtener_long(string nombretxt){               //Funcion que devuelve el tamaño del archivo (unsigned)
     unsigned long long tamanio=0;                               //Declro la variable que almacena al tamaño
-    fstream archivo1;                                           //Creo el elemento archivo
-    archivo1.open(nombretxt, fstream::in | fstream::ate);       //Abro en modo lectura, en el último caracter
-    if(archivo1.is_open()){                                     //Si el
+    fstream archivo;                                           //Creo el elemento archivo
+    archivo.open(nombretxt, fstream::in | fstream::ate);       //Abro en modo lectura, en el último caracter
+    if(archivo.is_open()){                                     //Si el
         //cout << "El archivo se abrió correctamente" << endl;
-                tamanio = archivo1.tellg();                             //tellg me dice donde esta el cursor y lo asigno a tamanio
+                tamanio = archivo.tellg();                             //tellg me dice donde esta el cursor y lo asigno a tamanio
     }
     else cout << "No fue posible abrir el archivo." << endl;
-    archivo1.close();                                           //Cierro el archivo
+    archivo.close();                                           //Cierro el archivo
     return tamanio;                                             //Retorno el tamaño
 }
 
-void copiar_arreglo(char* original, char* copia,unsigned long long tam){
+void copiar_arreglo(char* original, char* copia,unsigned long long tam){     //Función para hacer una copia de un arreglo
 
     for (unsigned long long i=0;i<tam;i++){
 
         copia[i]=original[i];
     }
 
-    //return copia;
 }
 
-int contar_bits(char *bloque, int semilla){
+int contar_bits(char *bloque, int semilla){                                   //Cuenta la cantidad de bits '1' en un bloque
 
     int unos=0;
-    for (int i=0; i<semilla; i++){
+    for (int i=0; i<semilla; i++){                                            //Los bloques son del tamaño que indica la semilla
         if (bloque[i]=='1') unos++;
     }
 
     return unos;
 }
 
-char invertir_bits(char a){
+char invertir_bits(char a){                                                   //Invierto un bit
     char b;
     if(a=='0') b='1';
     else b='0';
@@ -85,41 +84,39 @@ char invertir_bits(char a){
 
 }
 
-void escribir_dat(char *informacion, string nombrearchivo, unsigned long long tam){
-    fstream archivo;
-    archivo.open(nombrearchivo, fstream::out | fstream::binary);
-    if(archivo.is_open()){
+void escribir_dat(char *informacion, string nombrearchivo, unsigned long long tam){       //Escribir informacion en un archivo
+    fstream archivo;                                                                      //Creo el objeto fstream
+    archivo.open(nombrearchivo, fstream::out | fstream::binary);                          //abro el archivo
+    if(archivo.is_open()){                                                                //Si el archivo abrió correctamente ejecuto...
         cout << "\nEscribiendo .dat..." << endl;
-        archivo.write(informacion, tam);
+        archivo.write(informacion, tam);                                                  //Escribo la informacion sobre el archivo
     }
     else cout << "No fue posible abrir el archivo." << endl;
-    archivo.close();
+    archivo.close();                                                                      //Cierro el archivo
     cout<<"Informacion de la funcion escribiendo \n"<<informacion<<endl;
 
 }
 
-int levar(int numero, int potencia){
+int levar(int numero, int potencia){                                        //Elevo un numero a una potencia n
 
     int resultado_potencia=0;
 
     if(potencia==0)resultado_potencia=1;
-    else if (potencia==1)resultado_potencia=numero;
+    else if (potencia==1) resultado_potencia = numero;
     else {
         resultado_potencia=numero;
-        for(int p=0;p<potencia-1;p++)resultado_potencia*=numero;
+        for(int p=0;p<potencia-1;p++) resultado_potencia*=numero;             //Multiplico hasta obtener la potencia
 
     }
     return resultado_potencia;
 }
 
-int enterocodificado(char *bytes){
+int enterocodificado(char *bytes){                                          //Convierto el valor binario de un caracter ASCII a un entero
         int resultado=0,m;
-        //          8765 4321
-        //o = 111 = 0110 1111
-        for(int k=7; k>=0; k--){
-            if(bytes[k]=='1'){
-                if (k==-8)resultado+=levar(2,8);
-                else {
+        for(int k=7; k>=0; k--){                                            //Recorro el arreglo de atras para adelante
+            if(bytes[k]=='1'){                                              //Si hay un uno aplico...
+                if (k==-8)resultado+=levar(2,8);                            //SI ya me pase y hay un '1', elevo 2**8 y lo sumo
+                else {                                                      //Elevo y sumo
                     m=(7-k);
                     resultado+=levar(2,m);}
             }
@@ -127,7 +124,7 @@ int enterocodificado(char *bytes){
     return resultado;
 }
 
-char* CONVERTIR_BYTES_AINT(char* archivo_binario,unsigned long long tam){
+char* convertir_bytes(char* archivo_binario,unsigned long long tam){             //Convierto todo el archivo en binario a ASCII
 
     char* bloque;
     char* letras;
@@ -136,119 +133,306 @@ char* CONVERTIR_BYTES_AINT(char* archivo_binario,unsigned long long tam){
     letras[tam]='\0';
     bloque = new char [9];
     bloque[8]='\0';
-    unsigned long long indx=0,cont=0;
-    while (indx<tam*8){
-        for (int p=0;p<8;p++){
-            bloque[p]=archivo_binario[indx+p];
+    unsigned long long indx=0, cont=0;
+    while (indx<tam*8){                                                 //Recorro el arreglo en todo su tamaño
+        for (int p=0; p<8; p++){                                          //Comienzo recorriendo el primer bloque de 8 bits
+            bloque[p]=archivo_binario[indx+p];                          //Copio este segmento en la variable bloque
         }
-        caracter=enterocodificado(bloque);
-        letras[cont]=caracter;
-        indx+=8;
-        cont++;
+        caracter=enterocodificado(bloque);                              //Lo paso de binario a ASCII
+        letras[cont]=caracter;                                          //Lo pongo en su posicion en el arreglo que contendrá al nuevo archivo
+        indx+=8;                                                        //Me muevo otros 8 bits
+        cont++;                                                         //Aumento en 1 las posiciones para el archivo de caracteres
         //cout<<"\n\n Letras \n"<<letras<<endl;
     }
     //cout<<endl;
     return letras;
 }
 
-void metodo1(string namefile, int n){
+void metodo1(string namefile, int n){                         //Codificacion por el metodo 1 CHAR
     string namedat="";
-    unsigned long long tam=0,cont=0;
-    int unos=0,ceros=0;
-    char* archivo_binario = lectura1(namefile);
-    char* archivo_codificado = archivo_binario;
+    unsigned long long tam=0, cont=0;
+    int unos=0, ceros=0;
+    char* archivo_binario = lectura1(namefile);               //Obtengo el arreglo con el contenido en el archivo
+    char* archivo_codificado = archivo_binario;               //Hago una copia que almacenará el codificado
     char* bloque;
 
-    tam=obtener_long(namefile);
+    tam = obtener_long(namefile);                               //Obtengo la longitud del archivo
 
-    archivo_codificado= new char [(tam*8)+1];
-    archivo_codificado[tam*8]='\0';
-    bloque = new char [n+1];
-    bloque[n]='\0';
-    copiar_arreglo(archivo_binario,archivo_codificado,(tam*8));
+    archivo_codificado = new char [(tam*8)+1];                 //Asigno memoria
+    archivo_codificado[tam*8] = '\0';                          //Pongo caracter de final
+    bloque = new char [n+1];                                   //Defino el tamaño de los bloques (Segun la semilla)
+    bloque[n] = '\0';                                                //Asigno caracter final
+    copiar_arreglo(archivo_binario,archivo_codificado,(tam*8));      //copio
 
-    while (cont<(tam*8)){
+    while (cont<(tam*8)){                                            //Mientras el cursor aun esté dentro del arreglo
 
-       for (int p=0;p<n;p++) bloque[p]=archivo_binario[cont+p];
+       for (int p=0; p<n; p++) bloque[p] = archivo_binario[cont+p];                           //Me muevo por bloques segun lo indica la semilla
 
-       if (cont==0) for (int m=0;m<n;m++)archivo_codificado[m]=invertir_bits(bloque[m]);
+       if (cont==0) for (int m=0;m<n;m++)archivo_codificado[m]=invertir_bits(bloque[m]);      //Aplico la regla especifica para el primer bloque
 
        else {
-           if (ceros==unos) for (int q=0; q<n;q++) archivo_codificado[cont+q]=invertir_bits(bloque[q]);
+           if (ceros==unos) for (int q=0; q<n; q++) archivo_codificado[cont+q]=invertir_bits(bloque[q]);           //Aplico las reglas para los otros bloques
            else if (ceros>unos) for (int q=1; q<n;q=q+2) archivo_codificado[cont+q]=invertir_bits(bloque[q]);
            else if (unos>ceros) for (int q=2; q<n;q=q+3) archivo_codificado[cont+q]=invertir_bits(bloque[q]);
        }
-       cont+=n;
-       unos = contar_bits(bloque,n);
+       cont+=n;                          //Me muevo donde indique la semilla
+       unos = contar_bits(bloque,n);     //Cuento los bits para saber que regla sique
        ceros = (n-unos);
     }
-    //cout<<"EL BINARIO ORIGINAL \n\n"<<archivo_binario<<endl;
-    cout<<"\n\n EL BINARIO INVERTIDO \n\n"<<archivo_codificado<<endl;
-    cout << "Ingrese el nombre del archivo de salida (Use .dat): " << endl ;
+    cout << "\n\n EL BINARIO CODIFICADO \n\n"<<archivo_codificado<<endl;
+    cout << "Ingrese el nombre del archivo de salida CODIFICADO (Use .dat): " << endl ;    //Nombre que recibirá el nuevo archivo
     cin >> namedat;
-    //escribir_dat(archivo_codificado, namefile, tam);
 
-    char* letras=CONVERTIR_BYTES_AINT(archivo_codificado, tam);
+    char* letras = convertir_bytes(archivo_codificado, tam);                                //Paso el binario a letras
 
-   // cout<<"\n\n LOS CARACTERES RAROS \n\n"<<letras<<endl;
-    escribir_dat(letras,namedat,tam);
+    escribir_dat(letras,namedat,tam);                                                       //Escribo sobre el archivo
 
 }
 
-char* DESINVERTIR(string namefile, int n){
+char* decodificar(string namefile, int n){
 
-    //string namefile="M1S6T.txt";
-    unsigned long long tam=0,cont=0;
-    int unos=0,ceros=0;
-   char* archivo_binario_inverido=lectura1(namefile);
-    char* archivo_desinvertido;
+    unsigned long long tam=0, cont=0;
+    int unos=0, ceros=0;
+   char* archivo_binario_codificado = lectura1(namefile);                        //Leo el archivo codificado
+    char* archivo_decodificado;
     char* bloque;
     char* bloque2; //Bloque invertido
     bloque2 = new char [n+1];
-    bloque2[n]='\0';
+    bloque2[n] = '\0';
 
-   tam=obtener_long(namefile);
-    archivo_desinvertido= new char [(tam*8)+1];
-    archivo_desinvertido[tam*8]='\0';
+   tam=obtener_long(namefile);                                                 //Obtengo el tamaño del archivo
+    archivo_decodificado = new char [(tam*8)+1];                               //Asigno memoria
+    archivo_decodificado[tam*8] = '\0';                                        //Pongo caracter de final
     bloque = new char [n+1];
-    bloque[n]='\0';
-    copiar_arreglo(archivo_binario_inverido,archivo_desinvertido,(tam*8));
+    bloque[n] = '\0';
+    copiar_arreglo(archivo_binario_codificado,archivo_decodificado,(tam*8));       //Hago una copia del archivo
 
-    while (cont<(tam*8)){
+    while (cont<(tam*8)){                                                          //Recorro todo el archivo
 
-       for (int p=0;p<n;p++) bloque[p]=archivo_binario_inverido[cont+p];
+       for (int p=0;p<n;p++) bloque[p] = archivo_binario_codificado[cont+p];         //Me muevo en bloques segun indique la semilla
 
-       if (cont==0) for (int m=0;m<n;m++){
-           archivo_desinvertido[m]=invertir_bits(bloque[m]);
-           bloque2[m]=invertir_bits(archivo_binario_inverido[cont+m]);
+       if (cont==0) for (int m=0; m<n; m++){                                         //Reglas para el promer bloque
+           archivo_decodificado[m] = invertir_bits(bloque[m]);
+           bloque2[m] = invertir_bits(archivo_binario_codificado[cont+m]);
        }
 
-       else {
+       else {                                                                     //Reglas para los bloques que siguen
            if (ceros==unos) for (int q=0; q<n;q++) {
-               archivo_desinvertido[cont+q]=invertir_bits(bloque[q]);
-               bloque2[q]=invertir_bits(archivo_binario_inverido[cont+q]);
+               archivo_decodificado[cont+q] = invertir_bits(bloque[q]);
+               bloque2[q] = invertir_bits(archivo_binario_codificado[cont+q]);
            }
            else if (ceros>unos) for (int q=1; q<n;q=q+2) {
-               archivo_desinvertido[cont+q]=invertir_bits(bloque[q]);
-               bloque2[q]=invertir_bits(archivo_binario_inverido[cont+q]);
+               archivo_decodificado[cont+q] = invertir_bits(bloque[q]);
+               bloque2[q] = invertir_bits(archivo_binario_codificado[cont+q]);
            }
            else if (unos>ceros) for (int q=2; q<n;q=q+3) {
-               archivo_desinvertido[cont+q]=invertir_bits(bloque[q]);
-               bloque2[q]=invertir_bits(archivo_binario_inverido[cont+q]);
+               archivo_decodificado[cont+q] = invertir_bits(bloque[q]);
+               bloque2[q] = invertir_bits(archivo_binario_codificado[cont+q]);
            }
        }
-       for (int x=0;x<n;x++)bloque2[x]=archivo_desinvertido[cont+x];
+       for (int x=0;x<n;x++)bloque2[x] = archivo_decodificado[cont+x];
        cont+=n;
        unos=contar_bits(bloque2,n);
        ceros=(n-unos);
     }
 
-    //cout<<"EL BINARIO CODIFICADO \n\n"<<archivo_binario_inverido<<endl;
-        //cout<<"\n\n EL BINARIO DECODIFCADO \n\n"<<archivo_desinvertido<<endl;
-        char* letras=CONVERTIR_BYTES_AINT(archivo_desinvertido, tam);
+        char* letras = convertir_bytes(archivo_decodificado, tam);
 
-        //cout<<"\n\n LOS CARACTERES \n\n"<<letras<<endl;
+        cout << "Ingrese el nombre del archivo de salida DECODIFICADO (Use .txt): " << endl << endl;
+        cin>>namefile;
+
         escribir_dat(letras,namefile, tam);
         return letras;
 
 }
+
+
+/////////////////////////////////////////////////////////SEGUNDO MÉTODO/////////////////////////////////////////////////////////////////////////
+
+string obtenerstring(string namefiletxt){
+    unsigned long long tam = 0;
+    string textoinicial = "";
+    fstream archivo1;
+    archivo1.open(namefiletxt, fstream::in | fstream::out | fstream::binary | fstream::ate);
+    tam=obtener_long(namefiletxt);
+    //cout << "El tamaño es:" << tam <<endl;
+    archivo1.seekg(0);
+    string elemento;
+    elemento="";
+    char c;
+     for (unsigned long long i=0; i<tam; i++){
+          archivo1.seekg(i);
+          archivo1.get(c);
+          textoinicial.push_back(c);
+
+      }
+     //textoinicial+="/0";
+     //cout << textoinicial << endl;
+     archivo1.close();
+     return textoinicial;
+
+}
+
+string obtenerbinario(string namefile){
+    fstream archivo1;
+    int entero1;
+    char c;
+    archivo1.open(namefile, fstream::in | fstream::out | fstream::binary);
+    string binarionatural;
+    binarionatural = "";
+    unsigned long long tam;
+    tam = 0;
+    tam = obtener_long(namefile);
+    for (unsigned long long i=0; i<tam; i++){
+         archivo1.seekg(i);
+         archivo1.get(c);
+         entero1 = int(c);
+         binarionatural += stringbinario(entero1);
+
+
+     }
+    //cout << binarionatural << endl;
+    archivo1.close();
+    return binarionatural;
+
+}
+
+string stringbinario(int num){
+
+    string bloquebinario="00000000";
+    for (int i=0; i<8; i++){
+        if (num%2==1) bloquebinario[7-i] = '1';
+        num=num/2;
+    }
+
+
+    return bloquebinario;
+}
+
+string obtenerbinariocodificado(string namefile, int n){    //Obtengo string de 1 y 0
+    fstream archivo1;
+    unsigned long long cont;
+    cont = 0;
+    archivo1.open(namefile, fstream::out | fstream::in | fstream::binary);
+    string bloque;
+    bloque = "";
+    string bloque2 = "";
+    unsigned long long tam=0;
+    tam = obtener_long(namefile);
+    string binario = obtenerbinario(namefile);
+    //cout << binario << endl;
+    archivo1.seekg(0);
+    while (cont<(tam*8)){
+
+       for (int p=0; p<n; p++) bloque[p] = binario[cont+p];
+
+         bloque2[0] = bloque[n-1];
+         for (int m=1; m<n; m++) bloque2[m] = bloque[m-1];
+
+          for (int x=0; x<n; x++) binario[cont+x] = bloque2[x];
+
+       cont+=n;
+    }
+    archivo1.close();
+
+    return binario;
+}
+
+int obtenerentero(string binario8bits){
+    int numero1=0, numero2=0;
+    string elemento="";
+    //escribirdatstring(str3, namefilechar);
+    for(int i=0; i<8; i++){
+        elemento = binario8bits[7-i];
+        numero1=stoi(elemento);
+        if(numero1==1) numero2 = numero2+levar(2, i);
+    }
+    //cout << numero2 << endl;
+    return numero2;
+}
+
+string caracterescodificados(string namefile, int semilla){
+    unsigned long long cont=0;
+    int numero=0;
+    char caracter;
+    string texto;
+    texto="";
+    string bloque;
+    bloque="        ";
+    unsigned long long tam=0;
+    tam = obtener_long(namefile);
+    string binario1 = obtenerbinariocodificado(namefile, semilla);
+    //cout << binario1 << endl;
+    while (cont<(tam*8)){
+        for (int p=0;p<8;p++) bloque[p]=binario1[cont+p];
+        numero=obtenerentero(bloque);
+        caracter=char(numero);
+        texto.push_back(caracter);
+
+        cont+=8;
+    }
+    //cout << texto << endl;
+    return texto;
+
+}
+
+void escribirdatstring(string namefile, string informacion){
+    fstream archivo;
+    archivo.open(namefile, fstream::out | fstream::binary);
+    if(archivo.is_open()){
+        cout << "\nEscribiendo .dat..." << endl;
+        archivo<<informacion;
+    }
+    else cout << "No fue posible abrir el archivo." << endl;
+    archivo.close();
+}
+
+void codificarstring(string namefile, int n){
+    string str1, str2;
+    str1 = caracterescodificados(namefile, n);
+    cout << "Ingrese el nombre del archivo CODIFICADO de salida (Use .dat):" << endl << endl;
+    cin >> str2;
+    escribirdatstring(str2, str1);
+}
+
+string obtenerbinariodecodificado(string namefile, int n){
+    string strbool;
+    //strletras = "";
+    strbool = "";
+    //strbool = obtenerstring(namefile);
+    strbool = obtenerbinario(namefile);
+
+    fstream archivo1;
+    unsigned long long cont;
+    cont = 0;
+    archivo1.open(namefile, fstream::out | fstream::in | fstream::binary);
+    string bloque;
+    bloque = "";
+    string bloque2 = "";
+    unsigned long long tam = 0;
+    tam = obtener_long(namefile);
+    //string binario=obtenerbinario(namefile);
+    //cout << binario << endl;
+    archivo1.seekg(0);
+    while (cont<(tam)){
+
+       for (int p=0; p<n; p++) bloque[p] = strbool[cont+p];
+
+         bloque2[n-1] = bloque[0];
+         for (int m=n-1; m>0; m--) bloque2[m-1] = bloque[m];
+
+          for (int x=0; x<n; x++)strbool[cont+x] = bloque2[x];
+          //archivo_codificado[0] = archivo_binario[(tam*8)-1];
+
+       cont+=n;
+    }
+    archivo1.close();
+
+    //cout << binario << endl;
+    return strbool;
+}
+
+
+
+
+

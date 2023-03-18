@@ -27,11 +27,31 @@ int levar(int numero, int potencia);
 
 int enterocodificado(char *bytes);
 
-char* CONVERTIR_BYTES_AINT(char* archivo_binario,unsigned long long tam);
+char* convertir_bytes(char* archivo_binario,unsigned long long tam);
 
 void metodo1(string namefile, int n);
 
-char* DESINVERTIR(string namefile, int n);
+char* decodificar(string namefile, int n);
 
+
+//////////////////////////////////////////////////////SEGUNDO MÉTODO//////////////////////////////////////////////////////////////
+
+string obtenerstring(string namefiletxt);
+
+string obtenerbinario(string namefile);
+
+string stringbinario(int num);
+
+string obtenerbinariocodificado(string namefile, int n);
+
+int obtenerentero(string binario8bits);
+
+string caracterescodificados(string namefile, int semilla);
+
+void escribirdatstring(string namefile, string informacion);
+
+void codificarstring(string namefile, int n);
+
+string obtenerbinariodecodificado(string namefile, int n);
 
 #endif // MYLIB_H

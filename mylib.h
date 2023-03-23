@@ -15,7 +15,7 @@ char* caracter_a_binario(int num);
 
 unsigned long long obtener_long(string nombretxt);
 
-void copiar_arreglo(char* original, char* copia,unsigned long long tam);
+void copiar_arreglo(char* original, char* copia, unsigned long long tam);
 
 int contar_bits(char *bloque, int semilla);
 
@@ -27,7 +27,7 @@ int levar(int numero, int potencia);
 
 int enterocodificado(char *bytes);
 
-char* convertir_bytes(char* archivo_binario,unsigned long long tam);
+char* convertir_bytes(char* archivo_binario, unsigned long long tam);
 
 void metodo1(string namefile, int n);
 
@@ -57,5 +57,11 @@ string obtenerbinariodecodificado(string namefile, int n);
 string stringdecodificado(string namefile, int n);
 
 void decodificarstring(string namefile, int n);
+
+/////////////////////////////////////////////////////////APP//////////////////////////////////////////////////
+
+char* decodificarapp(string namefile, int n);
+
+void codificarapp(string namefile, int n);
 
 #endif // MYLIB_H

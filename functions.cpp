@@ -568,6 +568,60 @@ void codificarapp(string namefile, int n){                         //Codificacio
 
 }
 
+void decodificarapp1(string namefile, int n){
 
+    unsigned long long tam=0, cont=0;
+    int unos=0, ceros=0;
+   char* archivo_binario_codificado = lectura1(namefile);                        //Leo el archivo codificado
+    char* archivo_decodificado;
+    char* bloque;
+    char* bloque2; //Bloque invertido
+    bloque2 = new char [n+1];
+    bloque2[n] = '\0';
 
+   tam=obtener_long(namefile);                                                 //Obtengo el tamaño del archivo
+    archivo_decodificado = new char [(tam*8)+1];                               //Asigno memoria
+    archivo_decodificado[tam*8] = '\0';                                        //Pongo caracter de final
+    bloque = new char [n+1];
+    bloque[n] = '\0';
+    copiar_arreglo(archivo_binario_codificado,archivo_decodificado,(tam*8));       //Hago una copia del archivo
+
+    while (cont<(tam*8)){                                                          //Recorro todo el archivo
+
+       for (int p=0;p<n;p++) bloque[p] = archivo_binario_codificado[cont+p];         //Me muevo en bloques segun indique la semilla
+
+       if (cont==0) for (int m=0; m<n; m++){                                         //Reglas para el promer bloque
+           archivo_decodificado[m] = invertir_bits(bloque[m]);
+           bloque2[m] = invertir_bits(archivo_binario_codificado[cont+m]);
+       }
+
+       else {                                                                     //Reglas para los bloques que siguen
+           if (ceros==unos) for (int q=0; q<n;q++) {
+               archivo_decodificado[cont+q] = invertir_bits(bloque[q]);
+               bloque2[q] = invertir_bits(archivo_binario_codificado[cont+q]);
+           }
+           else if (ceros>unos) for (int q=1; q<n;q=q+2) {
+               archivo_decodificado[cont+q] = invertir_bits(bloque[q]);
+               bloque2[q] = invertir_bits(archivo_binario_codificado[cont+q]);
+           }
+           else if (unos>ceros) for (int q=2; q<n;q=q+3) {
+               archivo_decodificado[cont+q] = invertir_bits(bloque[q]);
+               bloque2[q] = invertir_bits(archivo_binario_codificado[cont+q]);
+           }
+       }
+       for (int x=0;x<n;x++)bloque2[x] = archivo_decodificado[cont+x];
+       cont+=n;
+       unos=contar_bits(bloque2,n);
+       ceros=(n-unos);
+    }
+
+        char* letras = convertir_bytes(archivo_decodificado, tam);
+
+        //cout << "Ingrese el nombre del archivo de salida DECODIFICADO (Use .txt): " << endl << endl;
+        //cin>>namefile;
+
+        escribir_dat(letras, "registro_userT.txt", tam);
+        //return letras;
+
+}
 

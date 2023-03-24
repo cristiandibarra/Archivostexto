@@ -64,4 +64,6 @@ char* decodificarapp(string namefile, int n);
 
 void codificarapp(string namefile, int n);
 
+void decodificarapp1(string namefile, int n);
+
 #endif // MYLIB_H

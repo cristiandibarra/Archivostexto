@@ -73,6 +73,7 @@ int main(){
         string clave2 = "";
         string saldo = "0";
         string lineadatos = "";
+        string contenido = "";
         int semillaapp = 4;
         char* sudotext = decodificarapp("sudo.dat", semillaapp);
 
@@ -88,16 +89,53 @@ int main(){
                     cout<<"Contraseña es Correcta \t MODO: ADMINISTRADOR" << endl << endl;
                     break;
                 }
-                else cout<<"Contraseña Inorrecta, tiene "<<2-i<<" intentos" << endl;
+                else cout<<"Contraseña Incorrecta, tiene "<<2-i<<" intentos" << endl;
             }
 
             if (claveadmin==sudotext){
                 cout << "¿Cuantos usuarios desea registrar? " << endl;
                 cin >> cantidadusuarios;
 
+                decodificarapp1("registro_userT.dat", semillaapp);
+
                 for (int p=0; p<cantidadusuarios; p++) {
-                    cout<<"Ingrese la Cedula del usuario a registrar:  ";
-                    cin>>cedula;
+
+                    bool state = true;
+                    int cont = 0;
+                    int pos = 0;
+                    int pos2 = 0;
+                    char caracter;
+                    string linea = "";
+                    string linea2 = "";
+                    char* usertext = decodificarapp("registro_userT.dat", semillaapp);
+
+                    while(state){
+                        cout<<"Ingrese la Cedula del usuario a registrar:  ";
+                        cin>>cedula;
+                        while(usertext[pos]!='\0'){
+                            while(usertext[cont+pos]!='\n'){
+                                caracter = usertext[cont+pos];
+                                linea.push_back(caracter);
+                                cont++;
+                            }
+                            pos+=cont+1;
+                            //cout << linea << endl;
+                            cont = 0;
+                            pos2 = linea.find("-");
+                            cedula2 = linea.substr(0,pos2);
+                            linea2=linea;
+                            linea = "";
+                            if(cedula==cedula2){
+                                cout << "El documento ya esta registrado, por favor ingrese uno nuevo: " << endl;
+                                cin >> cedula;
+                                pos=0;
+                            }
+                            else state=false;
+
+
+                        }
+                    }
+
                     cout<<"\n Ingrese la clave del usuario a registrar (Num 4 digitos):  ";
                     cin>>clave;
                     cout<<"\n Ingrese el saldo del usuario a registrar:  $(COP)";
@@ -110,9 +148,10 @@ int main(){
                     lineadatos.append(saldo);
                     lineadatos.append("\n");
 
-                    archivo.open("registro_userT.txt", fstream::app | fstream::binary |fstream::ate);
+                    archivo.open("registro_userT.txt", fstream::app);
                     if(archivo.is_open()) archivo << lineadatos;
                     else cout << "No fue posible abrir el archivo." << endl;
+                    lineadatos = "";
 
                     archivo.close();
                 }
@@ -163,6 +202,7 @@ int main(){
             if(cedula==cedula2){
 
                 int n = 0;
+                int n2 = 0;
                 cout << "Numero de cedula correcto." << endl << endl;
 
                 for(int i=0; i<2; i++){
@@ -195,7 +235,22 @@ int main(){
                                 cout << "Costo de la operacion: -$1000" << endl << endl;
                                 cout << "Saldo actual = " << saldoint-1000 << endl << endl;
 
+                                n=linea2.find(saldo);
+
                                 saldoint-=1000;
+                                saldo = to_string(saldoint);
+                                contenido=usertext;
+                                cout << contenido << endl;
+                                contenido.erase(contenido.find(linea2), n+saldo.size());
+                                cout << contenido << endl;
+
+                                linea2 = linea2.erase(n);
+                                cout << linea2 << endl;
+                                linea2+=saldo;
+                                cout << linea2 << endl;
+                                contenido+=linea2;
+                                cout << contenido << endl;
+                                //usertext = contenido;
 
                                 operacion=0;
                             }
